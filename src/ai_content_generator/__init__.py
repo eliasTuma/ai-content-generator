@@ -19,17 +19,27 @@ from ai_content_generator.core.exceptions import (
 )
 from ai_content_generator.core.factory import SessionFactory
 from ai_content_generator.core.session import LLMSession
+from ai_content_generator.providers import (
+    OpenAIProvider,
+    AnthropicProvider,
+    get_provider,
+    list_providers,
+)
 
 __all__ = [
     "AIContentGeneratorError",
+    "AnthropicProvider",
     "APIKeyMissingError",
     "BudgetExceededError",
     "Config",
     "ConfigurationError",
     "LLMSession",
+    "OpenAIProvider",
     "ProviderError",
     "SessionFactory",
     "ValidationError",
     "__version__",
+    "get_provider",
+    "list_providers",
 ]
 

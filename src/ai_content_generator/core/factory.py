@@ -101,25 +101,18 @@ class SessionFactory:
         Raises:
             ConfigurationError: If provider is not found
         """
-        # Import providers dynamically to avoid circular imports
-        # This will be properly implemented when provider classes are added
-        try:
-            if name == "openai":
-                from ai_content_generator.providers.openai_provider import OpenAIProvider
-                return OpenAIProvider
-            elif name == "anthropic":
-                from ai_content_generator.providers.anthropic_provider import AnthropicProvider
-                return AnthropicProvider
-            else:
-                raise ConfigurationError(
-                    f"Unknown provider: {name}",
-                    context={"provider": name, "supported_providers": ["openai", "anthropic"]},
-                )
-        except ImportError as e:
+        # Import provider registry
+        from ai_content_generator.providers import PROVIDER_REGISTRY, list_providers
+
+        name_lower = name.lower()
+        if name_lower not in PROVIDER_REGISTRY:
+            available = list_providers()
             raise ConfigurationError(
-                f"Provider '{name}' is not implemented yet",
-                context={"provider": name, "error": str(e)},
-            ) from e
+                f"Unknown provider: {name}",
+                context={"provider": name, "supported_providers": available},
+            )
+
+        return PROVIDER_REGISTRY[name_lower]
 
     def create_session(
         self,

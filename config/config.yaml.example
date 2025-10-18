@@ -1,0 +1,143 @@
+# AI Content Generator - Configuration File
+# Copy this file to config.yaml and customize as needed
+# Environment variables can be referenced using ${VAR_NAME} syntax
+
+# ============================================
+# Provider Configurations
+# ============================================
+providers:
+  openai:
+    api_key: ${OPENAI_API_KEY}  # Load from environment variable
+    timeout: 60  # Request timeout in seconds
+    max_retries: 3  # Maximum number of retry attempts
+    default_model: gpt-4-turbo-preview
+    models:
+      - name: gpt-4
+        input_price_per_1m: 30.0  # USD per 1M input tokens
+        output_price_per_1m: 60.0  # USD per 1M output tokens
+        context_window: 8192
+      - name: gpt-4-turbo-preview
+        input_price_per_1m: 10.0
+        output_price_per_1m: 30.0
+        context_window: 128000
+      - name: gpt-3.5-turbo
+        input_price_per_1m: 0.5
+        output_price_per_1m: 1.5
+        context_window: 16385
+
+  anthropic:
+    api_key: ${ANTHROPIC_API_KEY}  # Load from environment variable
+    timeout: 60
+    max_retries: 3
+    default_model: claude-3-5-sonnet-20241022
+    models:
+      - name: claude-3-5-sonnet-20241022
+        input_price_per_1m: 3.0
+        output_price_per_1m: 15.0
+        context_window: 200000
+      - name: claude-3-opus-20240229
+        input_price_per_1m: 15.0
+        output_price_per_1m: 75.0
+        context_window: 200000
+      - name: claude-3-haiku-20240307
+        input_price_per_1m: 0.25
+        output_price_per_1m: 1.25
+        context_window: 200000
+
+# ============================================
+# Session Defaults
+# ============================================
+session:
+  default_budget_usd: 10.0  # Default budget per session
+  default_provider: openai
+  default_model: gpt-4-turbo-preview
+  dry_run: false  # Set to true to simulate requests without calling APIs
+  
+  # Budget alerts (percentage thresholds)
+  alerts:
+    - threshold: 0.5  # Alert at 50% budget used
+    - threshold: 0.75  # Alert at 75% budget used
+    - threshold: 0.9  # Alert at 90% budget used
+
+# ============================================
+# Logging Configuration
+# ============================================
+logging:
+  level: INFO  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+  
+  # Console logger
+  console:
+    enabled: true
+    level: INFO
+    colored: true  # Use colored output
+  
+  # File logger
+  file:
+    enabled: true
+    level: DEBUG
+    path: logs/ai_content_generator.log
+    rotation: daily  # daily, size, or none
+    max_files: 7  # Keep last 7 log files
+    max_size_mb: 10  # Max size per file (if rotation is 'size')
+  
+  # Database logger (not implemented in MVP)
+  database:
+    enabled: false
+
+# ============================================
+# Cache Configuration
+# ============================================
+cache:
+  enabled: true
+  ttl: 3600  # Time to live in seconds (1 hour)
+  max_size: 100  # Maximum number of cached entries
+  strategy: lru  # LRU (Least Recently Used) eviction
+
+# ============================================
+# Retry Configuration
+# ============================================
+retry:
+  enabled: true
+  max_attempts: 3
+  initial_delay: 1.0  # Initial delay in seconds
+  max_delay: 60.0  # Maximum delay in seconds
+  exponential_base: 2.0  # Exponential backoff multiplier
+  jitter: true  # Add random jitter to prevent thundering herd
+  
+  # Which errors should trigger a retry
+  retry_on:
+    - rate_limit
+    - timeout
+    - connection_error
+    - server_error
+
+# ============================================
+# Validation Configuration
+# ============================================
+validation:
+  strict_mode: false  # If true, validation failures raise exceptions
+  validate_on_startup: true  # Validate configuration on startup
+  check_api_keys: true  # Check if API keys are present
+  test_connectivity: false  # Test provider connectivity on startup (makes API calls)
+
+# ============================================
+# Advanced Settings
+# ============================================
+advanced:
+  # Enable/disable features
+  features:
+    streaming: false  # Streaming support (not implemented in MVP)
+    function_calling: false  # Function calling support (not implemented in MVP)
+    batch_optimization: true  # Optimize batch operations
+  
+  # Performance settings
+  performance:
+    async_batch_size: 5  # Number of concurrent requests in batch operations
+    token_counting_cache: true  # Cache token counts for identical texts
+  
+  # Export settings
+  export:
+    default_format: json  # json or dict
+    include_metadata: true
+    pretty_print: true
+

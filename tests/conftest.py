@@ -68,3 +68,35 @@ def mock_anthropic_response() -> dict[str, any]:
         "usage": {"input_tokens": 10, "output_tokens": 20},
     }
 
+
+@pytest.fixture
+def temp_log_file(tmp_path):
+    """Temporary log file for testing."""
+    return str(tmp_path / "test.log")
+
+
+@pytest.fixture
+def sample_config() -> dict:
+    """Sample configuration for testing."""
+    return {
+        "providers": {
+            "openai": {
+                "api_key": "sk-test-key",
+                "timeout": 30,
+                "max_retries": 3,
+            },
+            "anthropic": {
+                "api_key": "sk-ant-test-key",
+                "timeout": 30,
+                "max_retries": 3,
+            },
+        },
+        "session": {
+            "default_budget_usd": 1.0,
+            "default_model": "gpt-5-nano",
+        },
+        "logging": {
+            "level": "INFO",
+            "file": "logs/test.log",
+        },
+    }

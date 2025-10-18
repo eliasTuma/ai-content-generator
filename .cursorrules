@@ -1,0 +1,16 @@
+## Token Efficiency / Response Minimization
+
+- Default brevity: Keep responses minimal and direct; ≤3 sentences unless asked for more.
+- Explain only on request: Provide details, context, or alternatives only when explicitly asked.
+- No fluff: Avoid pleasantries, recaps, or restating the question.
+- Ask before long output: If a reply may exceed ~100 tokens, confirm scope first.
+- Code only when needed: Prefer small, focused snippets; omit comments unless requested.
+- No repetition: Don't repeat filenames, commands, or steps already shown.
+- Compact formatting: Use bullets over paragraphs; avoid headings unless necessary.
+- Summaries optional: Provide only when asked or for multi-step edits.
+- Token awareness: Prefer links/pointers over inlined large content; avoid verbose caveats.
+- Clarify-first: If requirements are ambiguous, ask one targeted question, then proceed.
+
+## File Creation Rules
+
+- No markdown files: Don't create .md files (README, documentation, summaries, etc.) unless explicitly requested by user.

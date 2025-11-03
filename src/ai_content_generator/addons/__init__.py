@@ -5,6 +5,7 @@ from .cache import CacheAddon
 from .retry import RetryAddon
 from .response_validator import ResponseValidatorAddon, ValidationMode
 from .dry_run import DryRunAddon
+from .whitespace_minimizer import WhitespaceMinimizerAddon
 from .addon_manager import AddonManager
 
 __all__ = [
@@ -15,5 +16,6 @@ __all__ = [
     "ResponseValidatorAddon",
     "ValidationMode",
     "DryRunAddon",
+    "WhitespaceMinimizerAddon",
     "AddonManager",
 ]

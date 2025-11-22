@@ -15,7 +15,7 @@ class BaseProvider(ABC):
     def __init__(
         self,
         api_key: str,
-        timeout: int = 60,
+        timeout: int = 180,
         max_retries: int = 3,
         **kwargs: Any,
     ) -> None:
@@ -24,7 +24,7 @@ class BaseProvider(ABC):
 
         Args:
             api_key: API key for the provider
-            timeout: Request timeout in seconds
+            timeout: Request timeout in seconds (default 180s for long generations)
             max_retries: Maximum number of retry attempts
             **kwargs: Additional provider-specific configuration
         """

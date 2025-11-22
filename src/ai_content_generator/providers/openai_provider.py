@@ -133,7 +133,7 @@ class OpenAIProvider(BaseProvider):
     def __init__(
         self,
         api_key: str,
-        timeout: int = 60,
+        timeout: int = 180,
         max_retries: int = 3,
         **kwargs: Any,
     ) -> None:
@@ -142,7 +142,7 @@ class OpenAIProvider(BaseProvider):
 
         Args:
             api_key: OpenAI API key
-            timeout: Request timeout in seconds
+            timeout: Request timeout in seconds (default 180s for long generations)
             max_retries: Maximum number of retry attempts
             **kwargs: Additional OpenAI client configuration
         """

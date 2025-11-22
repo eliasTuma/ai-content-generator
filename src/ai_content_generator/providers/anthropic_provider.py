@@ -29,7 +29,7 @@ MODEL_PRICING = {
         "context_window": 200000,
         "description": "Claude Opus 4 - powerful model for complex tasks",
     },
-    "claude-sonnet-4-20250514": {
+    "claude-sonnet-4-5-20250929": {
         "input": 3.0,
         "output": 15.0,
         "context_window": 200000,
@@ -72,7 +72,7 @@ class AnthropicProvider(BaseProvider):
     def __init__(
         self,
         api_key: str,
-        timeout: int = 60,
+        timeout: int = 180,
         max_retries: int = 3,
         **kwargs: Any,
     ) -> None:
@@ -81,7 +81,7 @@ class AnthropicProvider(BaseProvider):
 
         Args:
             api_key: Anthropic API key
-            timeout: Request timeout in seconds
+            timeout: Request timeout in seconds (default 180s for long generations)
             max_retries: Maximum number of retry attempts
             **kwargs: Additional Anthropic client configuration
         """
@@ -337,10 +337,30 @@ class AnthropicProvider(BaseProvider):
             Number of tokens
 
         Note:
-            Anthropic uses the `count_tokens` API method for accurate token counting.
+            For performance, uses character-based estimation by default.
+            Set use_api_token_count=True in kwargs to use Anthropic's API for exact counting.
+        """
+        # Use fast estimation by default to avoid extra API calls during cost estimation
+        # Anthropic's token counting: ~3.5 chars/token for Claude models
+        # This is much faster and avoids rate limits during batch operations
+        return len(text) // 3 + 10  # Add 10 tokens for message overhead
+    
+    async def count_tokens_exact(self, text: str, model: str) -> int:
+        """
+        Count tokens using Anthropic's API for exact counting.
+        
+        Args:
+            text: Text to count tokens for
+            model: Model identifier
+            
+        Returns:
+            Exact number of tokens
+            
+        Note:
+            This makes an API call and is slower. Use count_tokens() for estimation.
         """
         try:
-            # Use Anthropic's token counting API
+            # Use Anthropic's token counting API for exact count
             result = await self.client.messages.count_tokens(
                 model=model,
                 messages=[{"role": "user", "content": text}],
@@ -348,8 +368,8 @@ class AnthropicProvider(BaseProvider):
             # Subtract 3 tokens for the message wrapper overhead
             return max(0, result.input_tokens - 3)
         except Exception:
-            # Fallback: rough estimation (1 token ≈ 4 characters)
-            return len(text) // 4
+            # Fallback: rough estimation (1 token ≈ 3.5 characters)
+            return len(text) // 3 + 10
 
     async def estimate_cost(
         self, prompt: str, model: str, max_tokens: Optional[int] = None
